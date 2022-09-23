@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menus</title>
+</head>
+<style>
+    body {
+        display: flex;
+        padding: 0;
+        margin: 0;
+        background: #2a2b2c;
+        color: #ffffff;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    #options {
+        width: 25%;
+        min-width: 250px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        background: #2a2b2c;
+        border-right: 2px solid #000000;
+    }
+
+    .btn {
+        display: flex;
+        background: #ffffff;
+        border: 1px solid #0000ff;
+        box-shadow: 0 0 5px #ffffff;
+        cursor: pointer;
+        transition: 0.5s all;
+        font-size: 15px;
+    }
+
+    .btn:hover {
+        background: #0000ffcc;
+        border: 1px solid #2a2b2c;
+        box-shadow: 0 0 5px #ffffff;
+        cursor: pointer;
+        color: #ffffff;
+    }
+
+    hr {
+        width: 100%;
+    }
+
+    #frame {
+        width: calc(75% - 2px);
+        min-width: 500px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #ffffff;
+    }
+</style>
+
+<body>
+    <div id="options">
+        <button class="btn" id="createGroup">Create Group</button>
+        <button class="btn" id="createUser">Create User</button>
+        <hr>
+        <button class="btn" id="deleteGroup">Delete Group</button>
+        <button class="btn" id="deleteUser">Delete User</button>
+        <hr>
+        <button class="btn" id="editGroup">Edit Group</button>
+        <button class="btn" id="editUser">Edit User</button>
+        <hr>
+        <button class="btn" id="getGroups">Get Groups</button>
+        <button class="btn" id="getUsers">Get Users</button>
+        <hr>
+        <button class="btn" id="addUserToGroup">Add User to Group</button>
+        <button class="btn" id="getMembersFromGroup">Get Members from Group</button>
+        <button class="btn" id="removeUserFromGroup">Remove User from Group</button>
+    </div>
+    <iframe src="" frameborder="0" id="frame"></iframe>
+</body>
+<script>
+    let btns = [];
+    btns = document.getElementsByClassName("btn");
+    if (btns) {
+        if (btns.length > 0) {
+            for(let i = 0; i < btns.length; i++){
+                btns[i].addEventListener('click', e => {
+                    document.getElementById("frame").src = './components/'+ e.target.id + '/' + e.target.id + '.html';
+                })
+            }
+        }
+    }
+</script>
+
+</html>
