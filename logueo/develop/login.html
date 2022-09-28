@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="form">
+        <div>
+            <span>User: </span>
+            <input type="text" id="user">
+        </div>
+        <div>
+            <span>Password: </span>
+            <input type="password" id="pass">
+        </div>
+        <div>
+            <input type="submit" id="login" value="Login">
+        </div>
+    </form>
+</body>
+<script>
+    let data;
+    (function () {
+        let form = document.getElementById("form");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            let user = document.getElementById("user").value;
+            let pass = document.getElementById("pass").value;
+
+            await fetch('./services/authEncrypt.php?user='+user+'&pass='+pass, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors'
+            }).then((res) => res.json()).then(res => {
+                if(res.status){
+                    if(res.status == "ok"){
+                        data = {
+                            'status': res.status,
+                            'user': res.data[0]
+                        };
+                    }else{
+                        data = {
+                            'status': res.status,
+                            'message': res.message
+                        };
+                    }
+                }
+            });
+            if(data.user){
+                document.getElementsByTagName("body")[0].removeChild(document.getElementById("form"));
+
+                let new_el = document.createElement("h1");
+                new_el.innerText = "Hello user " + data.user.username; 
+
+                document.getElementsByTagName("body")[0].appendChild(new_el);
+            }else{
+                alert(data.message);
+            }
+        });
+    })();
+</script>
+
+</html>
