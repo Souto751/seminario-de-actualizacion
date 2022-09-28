@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="form">
+        <div>
+            <span>User: </span>
+            <input type="text" id="user">
+        </div>
+        <div>
+            <span>Password: </span>
+            <input type="password" id="pass">
+        </div>
+        <div>
+            <input type="submit" id="login" value="Login">
+        </div>
+    </form>
+</body>
+<script>
+    (function () {
+        let form = document.getElementById("form");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            let user = document.getElementById("user").value;
+            let pass = document.getElementById("pass").value;
+
+            let data = {};
+
+            await fetch('./services/auth.php', {
+                method: 'POST'
+            }).then((res) => res.json()).then(res => { console.log(res) });
+
+            console.log(data);
+        });
+    })();
+</script>
+
+</html>
