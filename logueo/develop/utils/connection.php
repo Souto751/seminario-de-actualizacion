@@ -5,7 +5,7 @@
 
         public function __construct()
         {
-            $this->conn = new mysqli('localhost', 'root', 'root', 'acceso');
+            $this->conn = new mysqli('localhost', 'root', 'isft151', 'acceso');
         }
 
         public function get_connection()
