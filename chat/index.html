@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Document</title>
+</head>
+<body>
+    <button id="btnConnect">Connect</button>
+    <button id="btnDisconnect">Disconnect</button>
+    <div style="display: flex; flex-direction: column; margin-top: 15px; border: 1px solid black; border-radius: 5px; padding: 10px; gap: 5px;">
+        <span>Usuario A</span>
+        <textarea disabled name="" id="aMessages" cols="30" rows="10"></textarea>
+        <div style="display: flex; gap: 10px; justify-content: space-around;">
+            <input type="text" style="width: 90%;" id="aText">
+            <button id="aSend">Send</button>
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column; margin-top: 15px; border: 1px solid black; border-radius: 5px; padding: 10px; gap: 5px;">
+        <span>Usuario B</span>
+        <textarea disabled name="" id="bMessages" cols="30" rows="10"></textarea>
+        <div style="display: flex; gap: 10px; justify-content: space-around;">
+            <input type="text" style="width: 90%;" id="bText">
+            <button id="bSend">Send</button>
+        </div>
+    </div>
+</body>
+<script>
+    function connect(){
+        let data = {
+            "method": "POST",
+            "body": "AAA"
+        }
+        fetch("./connect_users.php", data).then(res => res.json()).then(res => {
+            sessionStorage.setItem("key", res);
+        });
+    }
+
+    function sendMessage(sender, target, container, message){
+        if(sessionStorage.getItem("key")){
+            let data = {
+                "method": "POST",
+                "body": JSON.stringify({
+                    sender,
+                    target,
+                    message: CryptoJS.AES.encrypt(message, sessionStorage.getItem("key")).toString(),
+                    key: sessionStorage.getItem("key")
+                })
+            }
+
+            fetch("./send_message.php", data).then(res => res.json()).then(res => {
+                console.log(res)
+                if(res.status == 'ok'){
+                    container.value += "-> " + CryptoJS.AES.decrypt(res.data.message, sessionStorage.getItem("key")).toString(CryptoJS.enc.Utf8) + "\n";
+                }else{
+                    alert("No se pudo enviar el mensaje");
+                }
+            });
+        }
+    }
+
+    function getMessages(container, target){
+        let data = {
+            "method": "POST",
+            "body": JSON.stringify({
+                id_user: target,
+                key: sessionStorage.getItem("key")
+            })
+        };
+        fetch("./send_message.php", data).then(res => res.json()).then(res => {
+            if(res.data){
+                if(res.data.length > 0){
+                    if(sessionStorage.getItem("key")){
+                        res.data.map(msg => {
+                            container.value += "-> " + CryptoJS.AES.decrypt(msg.message, sessionStorage.getItem("key")).toString(CryptoJS.enc.Utf8) + "\n";
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    function disconnect(){
+        sessionStorage.removeItem("key");
+    }
+
+    function main(){
+
+        btnConnect.addEventListener("click", () => connect());
+        getMessages(aMessages, 'A');
+        getMessages(bMessages, 'B');
+        aSend.addEventListener("click", (e) => {
+            sendMessage('A', 'B', bMessages, aText.value);
+            aText.value = "";
+        });
+        bSend.addEventListener("click", (e) => {
+            sendMessage('B', 'A', aMessages,bText.value);
+            bText.value = "";
+        });
+        btnDisconnect.addEventListener("click", () => disconnect());
+    }
+
+    window.addEventListener("load", () => main());
+</script>
+</html>
